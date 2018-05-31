@@ -23,8 +23,6 @@ import json
 from sklearn.metrics import precision_score, recall_score, f1_score
 from datetime import datetime as dt
 
-IMG_ROOT = '/home/mayu-ot/Data/Dataset/Flickr30kEntities/flickr30k-images/'
-
 class SampleManager(iterator.Iterator):
     def __init__(self, dataset, batch_size, p_batch_ratio, repeat=True, shuffle=True):
         self.dataset = dataset
@@ -197,7 +195,7 @@ class EntityDatasetWordID(EntityDatasetBase):
     def __init__(self, data_file, word_dict_file, san_check=False, skip=None):
         super(EntityDatasetWordID, self).__init__(data_file, san_check=san_check, skip=skip)
         
-        self._word_dict = pickle.load(open(word_dict_file, 'rb'))
+        self._word_dict = pickle.load(open(word_dict_file, 'rb'), encoding='latin1')
     
     def _get_entity(self, i):
         x1 = [self._word_dict[w] for w in self._phrase1[i].split('+')]
@@ -265,7 +263,7 @@ class ImageEntityDatasetWordID(ImageEntityDatasetBase):
     def __init__(self, data_file, word_dict_file, img_root, san_check=False, preload=False, skip=None):
         super(ImageEntityDatasetWordID, self).__init__(data_file, img_root, san_check=san_check, preload=preload, skip=skip)
         
-        self._word_dict = pickle.load(open(word_dict_file))
+        self._word_dict = pickle.load(open(word_dict_file, 'rb'), encoding='latin1')
     
     def _get_entity(self, i):
         x1 = [self._word_dict[w] for w in self._phrase1[i].split('+')]
@@ -554,8 +552,15 @@ def observe_pr(iterator_name='main', observation_key='pr'):
 def get_dataset(phrase_net, image_net=None, split='val', skip=None, preload=False, san_check=False):
     print(phrase_net, image_net, split)
     wo_image = (image_net is None)
+    
+    if not wo_image:
+        if 'FlickrIMG_ROOT' not in os.environ:
+            raise RuntimeError('set environmental variable FlickrIMG_ROOT')
 
-    img_root = IMG_ROOT
+        IMG_ROOT = os.environ['FlickrIMG_ROOT']
+        img_root = IMG_ROOT
+
+    
     phrase_file = 'data/phrase_pair_remove_trivial_match_%s.csv'
     word_dict_file = 'data/entity/word_dict'
     phrase_feature_file = 'data/entity/%s/textFeats_%s.npy'% (split, phrase_net)
@@ -619,7 +624,7 @@ def get_prediction(model_dir, split, device=None):
     setting = json.load(open(model_dir+'settings.json'))
     image_net = setting['image_net']
     phrase_net = setting['phrase_net']
-    img_preprocessed = setting['img_preprocessed']
+    # img_preprocessed = setting['img_preprocessed']
 
     model = setup_model(phrase_net, image_net)
 
@@ -653,7 +658,6 @@ def get_prediction(model_dir, split, device=None):
         'phrase2': test._phrase2,
         'ytrue': test._label,
         'score': pred,
-        'ypred': pred > .5,
     })
     
     return df
@@ -670,7 +674,7 @@ def train(args):
     preload = args.preload
     wo_image = (image_net is None)
 
-    out_base = 'checkpoints/'
+    out_base = 'checkpoint/'
     time_stamp = dt.now().strftime("%Y%m%d-%H%M%S")
     saveto = out_base + '{}{}-{}_{}/'.format(
         'sc_' * san_check,
@@ -746,44 +750,34 @@ def train(args):
 
 def evaluate(model_dir, split, device=None):
     df = get_prediction(model_dir, split, device)
-
-    y_true = df.ytrue
-    y_pred = df.ypred
-    prec = precision_score(y_true, y_pred)
-    rec = recall_score(y_true, y_pred)
-    f1 = f1_score(y_true, y_pred)
-    print('prec: %.4f, rec: %.4f, f1: %.4f' % (prec, rec, f1))
-
-    with open(model_dir + 'res_%s_scores.txt'%split, 'w') as f:
-        f.write('prec: %.4f, rec: %.4f, f1: %.4f' % (prec, rec, f1))
-
+    print('writing predicted results to '+model_dir+'res_%s.csv'%split)
     df.to_csv(model_dir+'res_%s.csv'%split)
 
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='training script for a paraphrase classifier')
     parser.add_argument('--lr', '-lr', type=float, default=0.01,
-                        help='learning rate <float>')
+                        help='learning rate <float> (default 0.01)')
     parser.add_argument('--device', '-d', type=int, default=None,
-                        help='gpu device id <int>')
+                        help='gpu device id <int> (default None(cpu mode))')
     parser.add_argument('--b_size', '-b', type=int, default=100,
-                        help='minibatch size <int> (default 10)')
+                        help='minibatch size <int> (default 100)')
     parser.add_argument('--epoch', '-e', type=int, default=5,
-                        help='maximum epoch <int>')
+                        help='maximum epoch <int> (default 5)')
     parser.add_argument('--san_check', '-sc', action='store_true',
                         help='sanity check mode')
-    parser.add_argument('--w_decay', '-wd', type=float, default=None,
-                        help='weight decay <float>')
+    parser.add_argument('--w_decay', '-wd', type=float, default=0.0001,
+                        help='weight decay <float> (default 0.0001)')
     parser.add_argument('--preload', action='store_true',
                         help='load images beforehand.')
     parser.add_argument('--resume', type=str, default=None,
                         help='file name of a snapshot <str>. you can restart the training at the checkpoint.')
     parser.add_argument('--phrase_net', type=str, default='avr',
-                        help='phrase features <str>: fv+cca, avr')
+                        help='phrase features <str>: fv+cca, fv+pca, avr')
     parser.add_argument('--image_net', type=str, default=None,
                         help='network to encode images <str>: vgg, resnet, if none only phrases are used.')
     parser.add_argument('--eval', type=str, default=None,
-                        help='path to an output directory <str>. the model will be evaluated.')
+                        help='path to a directory of a model, which will be evaluated <str>')
     args = parser.parse_args()
 
     if args.eval is not None:
