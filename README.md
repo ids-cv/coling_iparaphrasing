@@ -30,7 +30,7 @@ python codes/script/training/train_paraphrase_classifier.py --help
 FlickrIMG_ROOT=/path/to/flickr30k-images/ python codes/script/training/train_paraphrase_classifier.py -d 0 --eval /path/to/output/directory/
 ```
 
-Prediction results will be wrote to `res_test.csv` in the model directory.
+Prediction results will be written to `res_test.csv` in the model directory.
 
 ## Evaluate prediction
 
