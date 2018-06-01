@@ -5,7 +5,7 @@ scripts for our COLING paper "iParaphrasing: Extracting Visually Grounded Paraph
 
 Get Flickr30K entities dataset [here](http://web.engr.illinois.edu/~bplumme2/Flickr30kEntities/).
 
-Other materials can be downloaded from [here]() (figshare).
+Other materials can be downloaded from [here](https://figshare.com/projects/_COLING18_iParaphrasing/34637) (figshare).
 
 Download data.zip and models.zip, then extract zip files under `coling_iparaphrasing`.
 
