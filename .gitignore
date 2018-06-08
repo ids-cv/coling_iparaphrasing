@@ -3,6 +3,9 @@
 checkpoint/
 data/
 models/
+output/
+tmp/
+*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

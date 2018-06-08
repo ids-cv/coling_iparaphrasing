@@ -2,8 +2,6 @@ import pandas as pd
 import progressbar
 from sklearn import metrics
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
 import codecs
 
 if sys.version_info < (3, 0):
@@ -11,9 +9,8 @@ if sys.version_info < (3, 0):
     sys.stdout = codecs.getwriter('UTF-8')(sys.stdout)
     sys.stdin = codecs.getreader('UTF-8')(sys.stdin)
 
-def eval(gold, predict):
+def eval_ari_score(gold, predict_df):
     gt_df = pd.read_csv(gold, encoding = "utf-8")
-    predict_df = pd.read_csv(predict, encoding = "utf-8")
 
     img_list = gt_df.image.unique()
     bar = progressbar.ProgressBar()
@@ -45,7 +42,6 @@ def eval(gold, predict):
             if phrase in gt_label_dic:
                 predict_label_list.append(label)
                 gt_label_list.append(gt_label_dic[phrase])
-
         score += metrics.adjusted_rand_score(gt_label_list, predict_label_list)
 
     return score / len(img_list)
