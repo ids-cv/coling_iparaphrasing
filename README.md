@@ -7,7 +7,7 @@ Get Flickr30K entities dataset [here](http://web.engr.illinois.edu/~bplumme2/Fli
 
 Other materials can be downloaded from [here](https://figshare.com/projects/_COLING18_iParaphrasing/34637) (figshare).
 
-Download data.zip and models.zip, then extract zip files under `coling_iparaphrasing`.
+Download data.zip, ari_data.zip and models.zip, then extract zip files under `coling_iparaphrasing`.
 
 ## Train a model
 
@@ -33,5 +33,8 @@ FlickrIMG_ROOT=/path/to/flickr30k-images/ python codes/script/training/train_par
 Prediction results will be written to `res_test.csv` in the model directory.
 
 ## Evaluate prediction
-
-See codes/notebook/\[COLING\] Table 1.ipynb
+First, run 
+```
+codes/script/shell/prepare_eval.sh
+```
+See codes/notebook/\[COLING\] Table 1.ipynb and codes/notebook/\[COLING\] Table 1-ARI scores.ipynb
