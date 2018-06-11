@@ -15,7 +15,7 @@ def wrapper_feat(params, method, eval_type):
     
     clutter = params[0]
     res_df = feat_based_cluster(up_file, gs_file, feat_file,
-                               clutter=clutter, damping=0.5, saveto=tmp_file)
+                               clutter=clutter, damping=0.5)
     score = eval_ari_score(gs_file, res_df)
     return -score
 
@@ -26,7 +26,7 @@ def wrapper_score_based(params, method, eval_type):
     
     clutter = params[0]
     res_df = score_based_cluster(gs_file, pair_score_file, affinity_dir,
-                        clutter=clutter,damping=0.5,saveto=tmp_file)
+                        clutter=clutter,damping=0.5)
     score = eval_ari_score(gs_file, res_df)
     return -score
 

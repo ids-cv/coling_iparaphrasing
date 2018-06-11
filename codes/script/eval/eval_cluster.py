@@ -1,5 +1,4 @@
 import pandas as pd
-import progressbar
 from sklearn import metrics
 import sys
 import codecs
@@ -13,10 +12,9 @@ def eval_ari_score(gold, predict_df):
     gt_df = pd.read_csv(gold, encoding = "utf-8")
 
     img_list = gt_df.image.unique()
-    bar = progressbar.ProgressBar()
 
     score = 0
-    for img in bar(img_list):
+    for img in img_list:
         gt_df_img = gt_df.query('image == %i' % img)
         predict_df_img = predict_df.query('image == %i' % img)
 

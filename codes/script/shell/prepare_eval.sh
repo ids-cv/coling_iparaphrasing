@@ -1,5 +1,5 @@
 echo 'write output of baselines under models/'
-python codes/script/write_score_files.py
+python codes/script/preprocess/write_score_files.py
 
 echo 'writing affinity matrix'
 echo wea val

@@ -3,10 +3,7 @@ from sklearn.metrics import euclidean_distances
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 from sklearn.cluster import AffinityPropagation
-import progressbar
 import sys
-# reload(sys)
-# sys.setdefaultencoding('utf-8')
 import io
 import codecs
 import random
@@ -22,9 +19,8 @@ def feat_based_cluster(uniquePhrases, gold, phraseFeats, clutter, damping, affin
     feat_matrix = np.load(phraseFeats)
 
     img_list = gt_df.image.unique()
-    bar = progressbar.ProgressBar()
     result = []
-    for img in bar(img_list):
+    for img in img_list:
         gt_df_img = gt_df.query('image == %i' % img)
 
         feats = []
@@ -65,9 +61,8 @@ def score_based_cluster(gold, pair_score, affinity_save_path, clutter, damping):
 
     img_list = gt_df.image.unique()
 
-    bar = progressbar.ProgressBar()
     result = []
-    for img in bar(img_list):
+    for img in img_list:
         gt_df_img = gt_df.query('image == %i' % img)
 
         phrases = []

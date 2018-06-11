@@ -2,6 +2,8 @@ import sys
 sys.path.append('./')
 from codes.func.methods import *
 import os
+sys.path.append('codes/script/training')
+from train_paraphrase_classification import evaluate
 
 if not os.path.exists('models/wea'):
     os.mkdir('models/wea')
@@ -20,9 +22,12 @@ fv_pca = FV_PCA()
 fv_pca.save_score_file('val', 'models/fv+pca/res_val.csv')
 fv_pca.save_score_file('test', 'models/fv+pca/res_test.csv')
 
-fv_cca = FV_PCA()
+fv_cca = FV_CCA()
 fv_cca.save_score_file('val', 'models/fv+cca/res_val.csv')
 fv_cca.save_score_file('test', 'models/fv+cca/res_test.csv')
+
+for dir_name in os.listdir('models/'):
+    evaluate('models/'+dir_name, split='test', device=0)
 
 if not os.path.exists('models/Ens_avr'):
     os.mkdir('models/Ens_avr')
