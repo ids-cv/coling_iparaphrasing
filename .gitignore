@@ -1,3 +1,12 @@
+# my settings
+*.zip
+checkpoint/
+data/
+models/
+output/
+tmp/
+*.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
