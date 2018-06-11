@@ -1,6 +1,18 @@
 # iParaphrasing
 scripts for our COLING paper "iParaphrasing: Extracting Visually Grounded Paraphrases via an Image"
 
+## Dependencies
+This scripts are tested on
+
+- python 3.6
+- numpy 1.13.3
+- scipy 1.0.0
+- scikit-learn 0.19.1
+- pandas 0.21.0
+- chainer 4.0.0
+- GPy 1.9.2
+- GPuOpt 1.2.5
+
 ## Data
 
 Get Flickr30K entities dataset [here](http://web.engr.illinois.edu/~bplumme2/Flickr30kEntities/).
